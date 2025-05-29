@@ -1,0 +1,290 @@
+{
+  "ruleChain": {
+    "name": "Green House Rule Chain",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "additionalInfo": {
+      "description": "Check Mode and control relays based on sensor data"
+    }
+  },
+  "metadata": {
+    "version": 16,
+    "firstNodeIndex": 0,
+    "nodes": [
+      {
+        "type": "org.thingsboard.rule.engine.profile.TbDeviceProfileNode",
+        "name": "Device Profile Node",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1747991162432
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 1,
+        "configuration": {
+          "persistAlarmRulesState": false,
+          "fetchAlarmRulesStateOnStart": false
+        },
+        "additionalInfo": {
+          "description": "Process incoming messages from devices",
+          "layoutX": 55,
+          "layoutY": 367
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeSwitchNode",
+        "name": "Message Type Switch",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1747993275707
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "version": 0
+        },
+        "additionalInfo": {
+          "description": "Filter message types",
+          "layoutX": 273,
+          "layoutY": 467
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "Mode Filter",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1747993306559
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "return msg.mode == 1;",
+          "tbelScript": "return msg.mode == 1;"
+        },
+        "additionalInfo": {
+          "description": "Check if mode is manual (1)",
+          "layoutX": 344,
+          "layoutY": 215
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "Sensor Check",
+        "debugSettings": {
+          "failuresEnabled": true,
+          "allEnabled": false,
+          "allEnabledUntil": 1747993170576
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "return msg.soilMoisture < 30 || msg.temperature > 32;",
+          "tbelScript": "return msg.soilMoisture < 30 || msg.temperature > 35;"
+        },
+        "additionalInfo": {
+          "description": "Check soilMoisture < 30 or temperature > 35",
+          "layoutX": 508,
+          "layoutY": 340
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Pump RPC",
+        "debugSettings": {
+          "failuresEnabled": true,
+          "allEnabled": false,
+          "allEnabledUntil": 1747408404914
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "var newMsg = {};\nnewMsg.method = 'setPumpState';\nnewMsg.params = msg.soilMoisture < 30 ? 1 : 0;\nreturn {msg: newMsg, metadata: metadata, msgType: 'RPC message'};",
+          "tbelScript": "var newMsg = {};\nnewMsg.method = 'setPumpState';\nnewMsg.params = msg.soilMoisture < 30 ? 1 : 0;\nreturn {msg: newMsg, metadata: metadata, msgType: 'RPC message'};"
+        },
+        "additionalInfo": {
+          "description": "Set pump state based on soil moisture",
+          "layoutX": 750,
+          "layoutY": 150
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Fan RPC",
+        "debugSettings": {
+          "failuresEnabled": true,
+          "allEnabled": false,
+          "allEnabledUntil": 1747993195776
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "var newMsg = {};\nnewMsg.method = 'setFanState';\nnewMsg.params = msg.temperature > 32 ? 1 : 0;\nreturn {msg: newMsg, metadata: metadata, msgType: 'RPC message'};",
+          "tbelScript": "var newMsg = {};\nnewMsg.method = 'setFanState';\nnewMsg.params = msg.temperature > 35 ? 1 : 0;\nreturn {msg: newMsg, metadata: metadata, msgType: 'RPC message'};"
+        },
+        "additionalInfo": {
+          "description": "Set fan state based on temperature",
+          "layoutX": 762,
+          "layoutY": 461
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.rpc.TbSendRPCRequestNode",
+        "name": "Send Pump RPC",
+        "debugSettings": {
+          "failuresEnabled": true,
+          "allEnabled": false,
+          "allEnabledUntil": 1747408404914
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "timeoutInSeconds": 60
+        },
+        "additionalInfo": {
+          "description": "Send RPC to set pump state",
+          "layoutX": 979,
+          "layoutY": 237
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.rpc.TbSendRPCRequestNode",
+        "name": "Send Fan RPC",
+        "debugSettings": {
+          "failuresEnabled": true,
+          "allEnabled": false,
+          "allEnabledUntil": 1747408404914
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "timeoutInSeconds": 60
+        },
+        "additionalInfo": {
+          "description": "Send RPC to set fan state",
+          "layoutX": 988,
+          "layoutY": 343
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.action.TbLogNode",
+        "name": "Log Success",
+        "debugSettings": {
+          "failuresEnabled": true,
+          "allEnabled": false,
+          "allEnabledUntil": 1747408404914
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "return 'RPC Success: ' + JSON.stringify(msg);",
+          "tbelScript": "return 'RPC Success: ' + JSON.stringify(msg);"
+        },
+        "additionalInfo": {
+          "description": "Log successful RPC",
+          "layoutX": 1262,
+          "layoutY": 141
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.action.TbLogNode",
+        "name": "Log Failure",
+        "debugSettings": {
+          "failuresEnabled": true,
+          "allEnabled": false,
+          "allEnabledUntil": 1747408404914
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "return 'RPC Failure: ' + JSON.stringify(msg);",
+          "tbelScript": "return 'RPC Failure: ' + JSON.stringify(msg);"
+        },
+        "additionalInfo": {
+          "description": "Log failed RPC",
+          "layoutX": 1260,
+          "layoutY": 455
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Post telemetry"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 3,
+        "type": "True"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 4,
+        "type": "True"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 5,
+        "type": "True"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 6,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 9,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 9,
+        "type": "Failure"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

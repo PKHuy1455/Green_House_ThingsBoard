@@ -1,0 +1,15 @@
+Các thư viện cần install
+TbPubSubClient: version 2.12.1
+ThingsBoard: version 0.15.0
+ArduinoMqttClient: version 0.1.8
+ArduinoHttpClient: version 0.6.1
+
+Các bước setup:
+B1:Truy cập đường link "thingsboard.cloud.io"->đăng nhập
+B2:Entities -> Devives -> Add Devices -> Copy Token của Device
+B3:Dán Token Devices đã sao chép vào "access_token" trong code
+ 
+Setup Dashboard và rulechain:
+B1: Truy cập đường link "thingsboard.cloud.io" -> đăng nhập
+B2: Dashboard -> Add Dashboard -> dán file "green_house _dashboard" trong thư mục src/green_house _dashboard
+B3: Rule chains -> Add Rule chain -> dán file "green_house_rule_chain" trong thư mục src/green_house_rule_chain -> đặt làm root rule chain (make rule chain root)
