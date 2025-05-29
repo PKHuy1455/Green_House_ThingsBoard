@@ -4,11 +4,11 @@ Hệ thống giám sát nhiệt độ, độ ẩm nhà kính sử dụng ESP32 v
 
 Mô tả:
 
-Dự án đo dữ liệu từ các cảm biến môi trường như DHT11 và cảm biến độ ẩm đất, gửi dữ liệu lên ThingsBoard qua WiFi để theo dõi thời gian thực. 
+Dự án đo dữ liệu từ các cảm biến môi trường như DHT11,MQ-9 và cảm biến độ ẩm đất, gửi dữ liệu lên ThingsBoard qua WiFi để theo dõi thời gian thực. 
 
 Tính năng:
 
-Đo nhiệt độ, độ ẩm, độ ẩm đát.
+Đo nhiệt độ, độ ẩm, độ ẩm đát, Khí CO.
 Gửi dữ liệu lên ThingsBoard.
 Hiển thị trên Dashboard (biểu đồ, gauge).
 Điều khiển máy bơm và quạt trên Dashboard.
